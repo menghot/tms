@@ -12,3 +12,10 @@ experimental.concurrent-startup=true
 http-server.http.port=8080
 
 discovery.uri=http://localhost:8080
+
+
+
+connector.name=postgresql
+connection-url=jdbc:postgresql://postgresql:15432/test
+connection-user=test
+connection-password=test
