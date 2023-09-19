@@ -1,3 +1,14 @@
 OS platform mismatch
     while executing
 "mportinit ui_options global_options global_variations"
+
+
+
+
+node.id=ffffffff-ffff-ffff-ffff-00000000001
+node.environment=prod
+node.internal-address=localhost
+experimental.concurrent-startup=true
+http-server.http.port=8080
+
+discovery.uri=http://localhost:8080
