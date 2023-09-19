@@ -19,3 +19,9 @@ connector.name=postgresql
 connection-url=jdbc:postgresql://postgresql:15432/test
 connection-user=test
 connection-password=test
+
+
+connector.name=clickhouse
+connection-url=jdbc:clickhouse://clickhouse:8124/
+connection-user=test
+connection-password=test
