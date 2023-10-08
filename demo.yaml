@@ -1,0 +1,36 @@
+from __future__ import annotations
+
+from datetime import datetime
+
+from airflow import models
+from airflow.providers.trino.operators.trino import TrinoOperator
+
+
+# [START howto_operator_trino]
+
+with models.DAG(
+    dag_id="example_trino",
+    schedule="@once",  # Override to match your needs
+    start_date=datetime(2022, 1, 1),
+    catchup=False,
+    tags=["example"],
+) as dag:
+    trino_create_schema = TrinoOperator(
+        task_id="trino_create_schema",
+        sql=f"CREATE SCHEMA IF NOT EXISTS iceberg.simon",
+        trino_conn_id='trino_connection',
+        handler=list,
+    )
+
+    trino_templated_query = TrinoOperator(
+        task_id="trino_templated_query",
+        sql=["drop table if exists iceberg.simon.ice_person_20w3", "create table iceberg.simon.ice_person_20w3 as SELECT * FROM iceberg.simon.ice_person_20w"],
+        handler=list,
+
+        trino_conn_id='trino_connection'
+    )
+
+    (
+        trino_create_schema
+        >> trino_templated_query
+    )
