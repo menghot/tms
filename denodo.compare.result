@@ -10,3 +10,11 @@ Support CURD operations for iceberg/hudi/deltlake
 
 
 
+Feature	Denodo	Trino (Presto)	Dremio
+Type	Data Virtualization Platform	Distributed SQL Query Engine	Data Lake Engine
+Main Focus	Data virtualization	High-performance querying	Accelerating data lakes
+Connectivity	Wide range of data sources	Variety of data sources	Data lakes and other sources
+Performance	Caching and optimization	Exceptional query performance	Query acceleration
+Administration	User-friendly interface	Tools for cluster management	Monitoring and management
+Use Cases	Data virtualization, data integration, logical data warehousing	Interactive analytics, ad-hoc querying, BI	Querying data lakes, data exploration, accelerating queries
+Licensing & Cost	Varies by licensing model and edition	Open-source, community-driven, various distributions	Varies by licensing model and edition
