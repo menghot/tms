@@ -1,1 +1,12 @@
+https://community.denodo.com/docs/html/document/denodoconnects/8.0/en/Denodo%20Dialect%20for%20SQLAlchemy%20-%20User%20Manual
+
+Limitations
+Note that Denodo Dialect for SQLAlchemy does not support CUID operations.
+
+Trino
+Support CID operations for mysql/pg/oracle
+Support CURD operations for iceberg/hudi/deltlake
+
+
+
 
