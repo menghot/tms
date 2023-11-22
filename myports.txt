@@ -63,7 +63,36 @@ internal-communication.shared-secret=some-secret
 
 
 
-
+    def __init__(
+        self,
+        *,
+        bash_command: str,
+        env: dict[str, str] | None = None,
+        append_env: bool = False,
+        output_encoding: str = "utf-8",
+        skip_exit_code: int | None = None,
+        skip_on_exit_code: int | Container[int] | None = 99,
+        cwd: str | None = None,
+        **kwargs,
+    ) -> None:
+        super().__init__(**kwargs)
+        self.bash_command = bash_command
+        self.env = env
+        self.output_encoding = output_encoding
+        if skip_exit_code is not None:
+            warnings.warn(
+                "skip_exit_code is deprecated. Please use skip_on_exit_code", DeprecationWarning, stacklevel=2
+            )
+            skip_on_exit_code = skip_exit_code
+        self.skip_on_exit_code = (
+            skip_on_exit_code
+            if isinstance(skip_on_exit_code, Container)
+            else [skip_on_exit_code]
+            if skip_on_exit_code
+            else []
+        )
+        self.cwd = cwd
+        self.append_env = append_env
 
 
 
