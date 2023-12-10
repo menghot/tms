@@ -4,7 +4,7 @@ OS platform mismatch
 
 
 https://pypi.org/project/openmetadata-ingestion/#history
-
+https://docs.open-metadata.org/v1.2.x/deployment/ingestion/openmetadata
 
 coordinator=true
 node.id=ffffffff-ffff-ffff-ffff-00000000001
