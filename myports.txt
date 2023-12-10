@@ -6,6 +6,25 @@ OS platform mismatch
 https://pypi.org/project/openmetadata-ingestion/#history
 https://docs.open-metadata.org/v1.2.x/deployment/ingestion/openmetadata
 
+
+export DB_HOST=10.194.188.93
+export DB_PORT=5433
+export DB_DRIVER_CLASS='org.postgresql.Driver'
+export DB_SCHEME='postgresql'
+export DB_PARAMS='allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC'
+export DB_USER='openmetadata'
+export DB_USER_PASSWORD='openmetadata'
+export OM_DATABASE='openmetadata'
+
+export ELASTICSEARCH_SOCKET_TIMEOUT_SECS='60'
+export ELASTICSEARCH_USER='elatic'
+export ELASTICSEARCH_CONNECTION_TIMEOUT_SECS='5'
+export ELASTICSEARCH_PORT='9208'
+export ELASTICSEARCH_SCHEME='https'
+export ELASTICSEARCH_BATCH_SIZE='10'
+export ELASTICSEARCH_HOST='10.194.183.226'
+export ELASTICSEARCH_PASSWORD='iFN*7Ol7J+67WUcfwm7N'
+
 coordinator=true
 node.id=ffffffff-ffff-ffff-ffff-00000000001
 node.environment=prod
