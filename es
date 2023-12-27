@@ -19,3 +19,5 @@ ELASTICSEARCH_SCHEME='https'
 ELASTICSEARCH_BATCH_SIZE='10'
 ELASTICSEARCH_HOST='vpc-<random_characters>.<aws_region>.es.amazonaws.com'
 ELASTICSEARCH_PASSWORD='<ES_PASSWORD>'
+curl -XPOST http://localhost:8080/api/v1/openmetadata/enable --data-raw '{"dag_id": "example_bash_operator"}' -u "admin:admin" --header 'Content-Type: application/json'
+
