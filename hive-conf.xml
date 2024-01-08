@@ -1,0 +1,16 @@
+<property>
+    <name>hive.server2.authentication</name>
+    <value>CUSTOM</value>
+</property>
+<property>
+    <name>hive.server2.custom.authentication.class</name>
+    <value>org.example.AuthLogin</value>
+</property>
+<property>
+    <name>hive.auth.user</name>
+    <value>admin</value>
+</property>
+<property>
+    <name>hive.auth.pwd</name>
+    <value>Aa123456</value>
+</property>
