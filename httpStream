@@ -1,48 +1,119 @@
+package com.example.migration.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+
 import java.io.*;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.Arrays;
-import java.util.List;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.stream.Stream;
+@RestController
+public class DataController {
 
-public class LargeCSVConsumer {
+    @PostMapping("/stream-data")
+    public ResponseEntity<StreamingResponseBody> streamData(@RequestBody String request) {
+        System.out.println(request);
+        // Fetch your data
+        Stream<String> dataStream = fetchDataAsStream();
 
-    public static void main(String[] args) {
-        String url = "http://localhost:4567/large-csv"; // URL of the HTTP service providing the large CSV file
-        String outputPath = "output/large_file.csv"; // Path where the downloaded CSV file will be saved
+        // Set appropriate headers
+        ResponseEntity<StreamingResponseBody> response = ResponseEntity
+                .status(HttpStatus.OK)
+                .header("Content-Disposition", "attachment; filename=data.txt")
+                .body(outputStream -> writeDataToStream(dataStream, outputStream));
 
-        try {
-            downloadLargeCSV(url, outputPath);
-            System.out.println("CSV file downloaded successfully!");
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        return response;
     }
 
-    private static void downloadLargeCSV(String url, String outputPath) throws IOException, InterruptedException {
-        HttpClient httpClient = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .build();
-
-        HttpResponse<InputStream> response = httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream());
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(response.body()));
-             BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                List<String> fields = Arrays.asList(line.split(","));
-                // Save only the first 5 fields
-                for (int i = 0; i < Math.min(5, fields.size()); i++) {
-                    writer.write(fields.get(i));
-                    if (i < 4) {
-                        writer.write(",");
-                    }
-                }
-                writer.newLine();
+    private void writeDataToStream(Stream<String> dataStream, OutputStream outputStream) throws IOException {
+        dataStream.forEachOrdered(data -> {
+            try {
+                outputStream.write(data.getBytes());
+                outputStream.write(System.lineSeparator().getBytes()); // Add newline separator
+                outputStream.flush(); // Flush to ensure data is sent immediately
+                Thread.sleep(3000);
+            } catch (IOException e) {
+                // Handle any exceptions
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
+        });
+    }
+
+    // Dummy method to fetch data as a stream
+    private Stream<String> fetchDataAsStream() {
+        // Implement fetching your large dataset as a stream
+        // Example:
+
+
+
+        return Stream.of("Data1", "Data2", "Data3"); // Replace with actual data fetching logic
+    }
+
+
+    @GetMapping("/test")
+    public String test() throws IOException, InterruptedException {
+
+
+
+        try {
+            // URL of the web service
+            URL url = new URL("http://localhost:8001/stream-data");
+
+            // Open connection
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            // Set request method to POST
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+
+            // JSON request body
+            String jsonRequestBody = "{\"key\":\"value\"}";
+
+            // Write JSON data to the connection output stream
+            try (OutputStream outputStream = connection.getOutputStream()) {
+                outputStream.write(jsonRequestBody.getBytes());
+            }
+
+            // Get response code
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                // Get input stream from the connection
+                InputStream inputStream = connection.getInputStream();
+
+                // Wrap input stream in a BufferedReader
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                // Read data line by line
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println(line);
+                }
+
+                // Close resources
+                reader.close();
+                inputStream.close();
+            } else {
+                System.out.println("Failed to retrieve data. Response code: " + responseCode);
+            }
+
+            // Close connection
+            connection.disconnect();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+
+
+        return "done";
     }
 }
