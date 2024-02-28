@@ -1,0 +1,48 @@
+import java.io.*;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Arrays;
+import java.util.List;
+
+public class LargeCSVConsumer {
+
+    public static void main(String[] args) {
+        String url = "http://localhost:4567/large-csv"; // URL of the HTTP service providing the large CSV file
+        String outputPath = "output/large_file.csv"; // Path where the downloaded CSV file will be saved
+
+        try {
+            downloadLargeCSV(url, outputPath);
+            System.out.println("CSV file downloaded successfully!");
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void downloadLargeCSV(String url, String outputPath) throws IOException, InterruptedException {
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .build();
+
+        HttpResponse<InputStream> response = httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream());
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(response.body()));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath))) {
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                List<String> fields = Arrays.asList(line.split(","));
+                // Save only the first 5 fields
+                for (int i = 0; i < Math.min(5, fields.size()); i++) {
+                    writer.write(fields.get(i));
+                    if (i < 4) {
+                        writer.write(",");
+                    }
+                }
+                writer.newLine();
+            }
+        }
+    }
+}
