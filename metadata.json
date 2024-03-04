@@ -1,0 +1,279 @@
+{
+    "tpch": [
+        {
+            "name": "line",
+            "comment": "",
+            "properties": {
+                "data.update.frequency": "every_day/every_hour/every_week",
+                "data.source.system": "LEM report"
+            },
+            "data_format": "csv",
+            "csv_format_config": {
+                "ignore_header": true,
+                "determiner": ","
+            },
+            "json_format_config": {
+                "ignore_header": true,
+                "determiner": ","
+            },
+            "file_system": "sftp",
+            "sftp_config": {
+                "host": "10.194.183.226",
+                "port": 22,
+                "username": "root",
+                "password": "bmsoft",
+                "location": "/tmp",
+                "file_filter_regx": ".*.gz$",
+                "file_name_extract_regx": ""
+            },
+            "s3_config": {
+                "host": "10.194.183.226",
+                "port": 22,
+                "username": "root",
+                "password": "bmsoft",
+                "location": "/tmp",
+                "file_filter_regx": ".*.gz$",
+                "file_name_extract_regx": ""
+            },
+            "http_config": {
+                "host": "10.194.183.226",
+                "port": 22,
+                "username": "root",
+                "password": "bmsoft",
+                "location": "/tmp",
+                "file_filter_regx": ".*.gz$",
+                "file_name_extract_regx": ""
+            },
+            "local_config": {
+                "location": "/tmp",
+                "file_filter_regx": ".*.gz$",
+                "file_name_extract_regx": ""
+            },
+            "columns": [
+                {
+                    "name": "orderkey",
+                    "type": "BIGINT",
+                    "comment": "The order key"
+                },
+                {
+                    "name": "partkey",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "suppkey",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "linenumber",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "quantity",
+                    "type": "DOUBLE"
+                },
+                {
+                    "name": "discount",
+                    "type": "DOUBLE"
+                },
+                {
+                    "name": "tax",
+                    "type": "DOUBLE"
+                },
+                {
+                    "name": "returnflag",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "linestatus",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "shipdate",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "commitdate",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "receiptdate",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "shipinstruct",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "shipmode",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "comment",
+                    "type": "VARCHAR"
+                }
+            ]
+        },
+        {
+            "name": "lineitem",
+            "format": "csv",
+            "sftp_config": {
+                "host": "10.194.188.93",
+                "port": 22,
+                "username": "root",
+                "password": "bmsoft",
+                "location": "/tmp/",
+                "file_filter_regx": ".*.gz$",
+                "file_name_extract_regx": ""
+            },
+            "columns": [
+                {
+                    "name": "orderkey",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "partkey",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "suppkey",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "linenumber",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "quantity",
+                    "type": "DOUBLE"
+                },
+                {
+                    "name": "discount",
+                    "type": "DOUBLE"
+                },
+                {
+                    "name": "tax",
+                    "type": "DOUBLE"
+                },
+                {
+                    "name": "returnflag",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "linestatus",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "shipdate",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "commitdate",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "receiptdate",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "shipinstruct",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "shipmode",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "comment",
+                    "type": "VARCHAR"
+                }
+            ]
+        },
+        {
+            "name": "custome",
+            "format": "csv",
+            "sftp_config": {
+                "host": "10.194.183.226",
+                "port": 22,
+                "username": "root",
+                "password": "bmsoft",
+                "location": "/tmp/customer",
+                "file_filter_regx": ".*.gz$",
+                "file_name_extract_regx": ""
+            },
+            "columns": [
+                {
+                    "name": "c_customer_sk",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "c_customer_id",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "c_current_cdemo_sk",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "c_current_hdemo_sk",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "c_current_addr_sk",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "c_first_shipto_date_sk",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "c_first_sales_date_sk",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "c_salutation",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "c_first_name",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "c_last_name",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "c_preferred_cust_flag",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "c_birth_day",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "c_birth_month",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "c_birth_year",
+                    "type": "BIGINT"
+                },
+                {
+                    "name": "c_birth_country",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "c_login",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "c_email_address",
+                    "type": "VARCHAR"
+                },
+                {
+                    "name": "c_last_review_date_sk",
+                    "type": "BIGINT"
+                }
+            ]
+        }
+    ]
+}
