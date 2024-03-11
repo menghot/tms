@@ -1,0 +1,15 @@
+#openssl genrsa -out ca.key 2048
+#openssl req -new -x509 -days 365 -key ca.key -subj "/C=CN/ST=GD/L=SZ/O=Bmsk, Inc./CN=Acme Root CA" -out ca.crt
+#openssl x509 -req -extfile <(printf "subjectAltName=DNS:example.com,DNS:www.example.com") -days 720 -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt
+
+openssl req -newkey rsa:2048 -nodes -keyout server.key -subj "/C=CN/ST=GD/L=SZ/O=Bmsk, Inc./CN=*.sk.co" -out server.csr
+openssl x509 -req -extfile <(printf "subjectAltName=DNS:*.sk.co") -days 365 -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server.crt
+kubectl create secret tls ingress-ssl3--key server.key --cert server.crt -nkube-system
+================================
+
+openssl req -newkey rsa:2048 -nodes -keyout server.key -subj "/C=CN/ST=GD/L=SZ/O=Bmsk, Inc./CN=*.sk.co" -out server.csr
+openssl x509 -req -extfile <(printf "subjectAltName=DNS:*.sk.co,IP:10.194.188.93") -days 365 -in server.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out server.crt
+kubectl create secret tls dashboard --key server.key --cert server.crt -nkube-system
+
+
+cat server.crt server.key > haproxy.pem
