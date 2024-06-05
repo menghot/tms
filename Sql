@@ -1,0 +1,35 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class SQLSplitter {
+
+    public static List<String> splitSQLStatements(String sql) {
+        List<String> statements = new ArrayList<>();
+
+        // Define a regex pattern for splitting SQL statements.
+        String regex = "(?<statement>(?:(?:[^;'\"/]+|(?:--.*?$)|(?:'.*?'|\".*?\"|/\\*.*?\\*/))+)*)[;\\s]*";
+        Pattern pattern = Pattern.compile(regex, Pattern.DOTALL | Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(sql);
+
+        while (matcher.find()) {
+            String statement = matcher.group("statement").trim();
+            if (!statement.isEmpty()) {
+                statements.add(statement);
+            }
+        }
+
+        return statements;
+    }
+
+    public static void main(String[] args) {
+        String sqlText = "SELECT * FROM users; /* comment */ INSERT INTO users (id, name) VALUES (1, 'Alice'); -- end of script";
+
+        List<String> statements = splitSQLStatements(sqlText);
+
+        for (String statement : statements) {
+            System.out.println("SQL Statement: " + statement);
+        }
+    }
+}
