@@ -1,0 +1,52 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class SQLProcessor {
+
+    // Method to remove SQL comments
+    public static String removeSQLComments(String sql) {
+        // Regex patterns for SQL comments
+        String singleLineCommentPattern = "--.*?$";
+        String multiLineCommentPattern = "/\\*.*?\\*/";
+
+        // Remove single-line comments
+        sql = sql.replaceAll(singleLineCommentPattern, "");
+
+        // Remove multi-line comments
+        sql = sql.replaceAll(multiLineCommentPattern, "");
+
+        return sql;
+    }
+
+    // Method to split SQL statements
+    public static List<String> splitSQLStatements(String sql) {
+        List<String> statements = new ArrayList<>();
+
+        // Define a regex pattern for splitting SQL statements.
+        String regex = "(?<statement>(?:(?:[^;'\"/]+|(?:'.*?'|\".*?\"))+)*)[;\\s]*";
+        Pattern pattern = Pattern.compile(regex, Pattern.DOTALL | Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(sql);
+
+        while (matcher.find()) {
+            String statement = matcher.group("statement").trim();
+            if (!statement.isEmpty()) {
+                statements.add(statement);
+            }
+        }
+
+        return statements;
+    }
+
+    public static void main(String[] args) {
+        String sqlText = "SELECT * FROM users; -- Fetch all users\n"
+                       + "/* This is a multi-line\n"
+                       + "comment */\n"
+                       + "INSERT INTO users (id, name) VALUES (1, 'Alice'); /* another comment */";
+
+        // Step 1: Remove comments
+        String sqlWithoutComments = removeSQLComments(sqlText);
+        System.out.println("SQL without comments:\n" + sqlWithoutComments);
+
+        // Step 2: Split SQL
