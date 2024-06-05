@@ -1,0 +1,70 @@
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
+public class SQLProcessorTest {
+
+    @Test
+    public void testRemoveSingleLineComments() {
+        String sql = "SELECT * FROM users; -- Fetch all users\nINSERT INTO users (id, name) VALUES (1, 'Alice');";
+        String expected = "SELECT * FROM users; \nINSERT INTO users (id, name) VALUES (1, 'Alice');";
+        String result = SQLProcessor.removeSQLComments(sql);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testRemoveMultiLineComments() {
+        String sql = "SELECT * FROM users; /* Fetch all users */ INSERT INTO users (id, name) VALUES (1, 'Alice');";
+        String expected = "SELECT * FROM users;  INSERT INTO users (id, name) VALUES (1, 'Alice');";
+        String result = SQLProcessor.removeSQLComments(sql);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testRemoveMixedComments() {
+        String sql = "SELECT * FROM users; -- Fetch all users\n/* This is a multi-line\ncomment */\nINSERT INTO users (id, name) VALUES (1, 'Alice'); /* another comment */";
+        String expected = "SELECT * FROM users; \n\nINSERT INTO users (id, name) VALUES (1, 'Alice'); ";
+        String result = SQLProcessor.removeSQLComments(sql);
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testSplitSimpleSQLStatements() {
+        String sql = "SELECT * FROM users; INSERT INTO users (id, name) VALUES (1, 'Alice');";
+        List<String> result = SQLProcessor.splitSQLStatements(sql);
+        assertEquals(2, result.size());
+        assertEquals("SELECT * FROM users", result.get(0));
+        assertEquals("INSERT INTO users (id, name) VALUES (1, 'Alice')", result.get(1));
+    }
+
+    @Test
+    public void testSplitSQLStatementsWithComments() {
+        String sql = "SELECT * FROM users; -- Fetch all users\nINSERT INTO users (id, name) VALUES (1, 'Alice');";
+        sql = SQLProcessor.removeSQLComments(sql);
+        List<String> result = SQLProcessor.splitSQLStatements(sql);
+        assertEquals(2, result.size());
+        assertEquals("SELECT * FROM users", result.get(0));
+        assertEquals("INSERT INTO users (id, name) VALUES (1, 'Alice')", result.get(1));
+    }
+
+    @Test
+    public void testSplitSQLStatementsWithQuotes() {
+        String sql = "INSERT INTO users (id, name) VALUES (1, 'Alice;'); SELECT * FROM users WHERE name = 'Bob;';";
+        List<String> result = SQLProcessor.splitSQLStatements(sql);
+        assertEquals(2, result.size());
+        assertEquals("INSERT INTO users (id, name) VALUES (1, 'Alice;')", result.get(0));
+        assertEquals("SELECT * FROM users WHERE name = 'Bob;'", result.get(1));
+    }
+
+    @Test
+    public void testRemoveCommentsAndSplitSQL() {
+        String sql = "SELECT * FROM users; -- Fetch all users\n/* This is a multi-line\ncomment */\nINSERT INTO users (id, name) VALUES (1, 'Alice'); /* another comment */";
+        String sqlWithoutComments = SQLProcessor.removeSQLComments(sql);
+        List<String> result = SQLProcessor.splitSQLStatements(sqlWithoutComments);
+        assertEquals(2, result.size());
+        assertEquals("SELECT * FROM users", result.get(0));
+        assertEquals("INSERT INTO users (id, name) VALUES (1, 'Alice')", result.get(1));
+    }
+}
