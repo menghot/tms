@@ -1,0 +1,31 @@
+public class SqlSplitter {
+    // Regular expression pattern to match SQL statements
+    private static final Pattern SQL_PATTERN = Pattern.compile(
+        "(?<=;)(?=(?:[^']*'[^']*')*[^']*$)", // Matches semicolons that are not inside quotes
+        Pattern.MULTILINE | Pattern.DOTALL);
+
+    public static List<String> splitSql(String sql) {
+        // Split the SQL statements using the pattern
+        String[] statements = SQL_PATTERN.split(sql);
+
+        // Trim and filter out empty statements
+        List<String> result = new ArrayList<>();
+        for (String statement : statements) {
+            statement = statement.trim();
+            if (!statement.isEmpty()) {
+                result.add(statement);
+            }
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        String sqlText = "SELECT * FROM table1; INSERT INTO table2 (col1, col2) VALUES ('val1', 'val2'); " +
+                         "UPDATE table3 SET col3 = 'val3' WHERE col4 = 'val4';";
+        
+        List<String> sqlStatements = splitSql(sqlText);
+        for (String stmt : sqlStatements) {
+            System.out.println(stmt);
+        }
+    }
+}
