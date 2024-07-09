@@ -1,0 +1,25 @@
+docker run --rm -p 8585:8585 \
+-e  DB_DRIVER_CLASS=org.postgresql.Driver \
+-e  DB_SCHEME=postgresql \
+-e  DB_PARAMS=serverTimezone=UTC \
+-e  DB_USER=om \
+-e  DB_USER_PASSWORD=ompassword \
+-e  DB_HOST=192.168.80.241 \
+-e  DB_PORT=5432 \
+-e  OM_DATABASE=openmetadata \
+-e  ELASTICSEARCH_PORT=9200 \
+-e  ELASTICSEARCH_SCHEME=http \
+-e  ELASTICSEARCH_BATCH_SIZE=100 \
+-e  ELASTICSEARCH_HOST=192.168.80.241 \
+-e  "AUTHORIZER_REQUEST_FILTER=org.openmetadata.service.security.JwtFilter" \
+-e  "AUTHORIZER_ADMIN_PRINCIPALS=[admin]" \
+-e  "AUTHORIZER_INGESTION_PRINCIPALS=ingestion-bot" \
+-e  "AUTHORIZER_PRINCIPAL_DOMAIN=openmetadata.org" \
+-e  "AUTHORIZER_ENFORCE_PRINCIPAL_DOMAIN=false" \
+-e  "AUTHORIZER_ENABLE_SECURE_SOCKET=false" \
+-e  "AUTHENTICATION_PROVIDER=basic" \
+-e  "AUTHENTICATION_RESPONSE_TYPE=id_token" \
+-e  "AUTHENTICATION_PUBLIC_KEYS=[http://localhost:8585/api/v1/system/config/jwks]" \
+-e  "AUTHENTICATION_JWT_PRINCIPAL_CLAIMS=[email,preferred_username,sub]" \
+-e  "AUTHENTICATION_CLIENT_TYPE=public" \
+docker.getcollate.io/openmetadata/server:1.4.4 ./bootstrap/openmetadata-ops.sh migrate
