@@ -1,10 +1,31 @@
+#serverConfig:
+#  node.environment: test
+#  http-server.http.port: 8083
+
 serverConfig:
   node.environment: test
-  http-server.http.port: 8083
+  http-server.http.enabled: false
+  http-server.https.enabled: true
+  http-server.https.port: 8441
+  http-server.https.keystore.path: trino.pem
+  #http-server.https.keystore.key: changeme
+
+presetUsers:
+  user1:
+    password: trino
+    privileges: ADMIN_USER
+  user2:
+    password: trino
+    privileges: API
+
+authorization:
+  admin: (.*)ADMIN(.*)
+  user: (.*)USER(.*)
+  api: (.*)API(.*)
 
 routingRules:
   rulesEngineEnabled: False
-  # rulesConfigPath: "src/main/resources/rules/routing_rules.yml"
+  #rulesConfigPath: "src/main/resources/rules/routing_rules.yml"
 
 dataStore:
   jdbcUrl: jdbc:postgresql://192.168.80.241:5432/trinogateway
