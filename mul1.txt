@@ -1,0 +1,65 @@
+from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
+from airflow.decorators import task
+from airflow import DAG
+from datetime import datetime as dt
+import pendulum
+
+local_tz = pendulum.timezone("America/Mexico_City")
+
+abc = 0
+
+
+def push_param(**kwargs):
+    # Accessing DAG parameters and pushing to XCom
+    param_value = kwargs['params'].get('param1')
+    ti = kwargs['ti']
+    ti.xcom_push(key='site_ids', value=param_value)
+
+
+def print_args(x, y):
+    print(x)
+    print(y)
+    return x + y
+
+
+def print_abc():
+    print(abc)
+
+
+default_args = {
+    'owner': 'Me',
+    'depends_on_past': False,
+    'start_date': dt(2020, 7, 17, tzinfo=local_tz),
+}
+
+sqls = {"abc": "select *", "cbd": "select 1"}
+
+with DAG('dag_test_j',
+         default_args=default_args,
+         catchup=False,
+         concurrency=4,
+         max_active_runs=1,
+         params={'param1': 'default_value1', 'param2': 'default_value2'},
+         ) as dag:
+    python_test = PythonOperator.partial(task_id="task-1", python_callable=print_args).expand_kwargs(
+        [{"op_kwargs": {"x": 1, "y": 2}, "show_return_value_in_logs": True},
+         {"op_kwargs": {"x": 3, "y": 4}, "show_return_value_in_logs": False}, ])
+
+    print_abc = PythonOperator(task_id="task-2", python_callable=print_abc)
+
+    push_param_task = PythonOperator(
+        task_id='push_param_task',
+        python_callable=push_param,
+        provide_context=True
+    )
+
+    bash_echo = BashOperator.partial(task_id="bash").expand_kwargs(
+        [
+            {"bash_command": "echo $ENV1", "env": {"ENV1": "1"}},
+            {"bash_command": "printf $ENV2",
+             "env": {"ENV2": "{{ ti.xcom_pull(task_ids='push_param_task', key='site_ids') }}"}},
+        ],
+    )
+
+python_test >> print_abc >> bash_echo
