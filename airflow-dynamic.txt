@@ -1,0 +1,109 @@
+from airflow import DAG
+from airflow.operators.python_operator import PythonOperator
+from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators.python import get_current_context
+from datetime import datetime, timedelta
+
+
+# import mysql.connector
+
+# Function to fetch task configuration from the database based on parameters
+def fetch_task_config(task_ids):
+    # Connect to the database
+    # conn = mysql.connector.connect(
+    #     host='your_host',
+    #     user='your_user',
+    #     password='your_password',
+    #     database='your_database'
+    # )
+    # cursor = conn.cursor(dictionary=True)
+    #
+    # # Use task_ids parameter to filter the query
+    # task_ids_placeholder = ','.join(['%s'] * len(task_ids))
+    # query = f"SELECT task_id, message FROM tasks_config WHERE task_id IN ({task_ids_placeholder})"
+    # cursor.execute(query, task_ids)
+    #
+    # tasks = cursor.fetchall()
+    # cursor.close()
+    # conn.close()
+    tasks = []
+    for task_id in task_ids:
+        tasks.append({"task_id": task_id, "message": task_id})
+
+    return tasks
+
+
+# Function to print messages (used in PythonOperator)
+def print_message(message):
+    print(message)
+
+
+default_args = {
+    'owner': 'airflow',
+    'depends_on_past': False,
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5),
+}
+
+dag = DAG(
+    'dynamic_task_from_db_with_params',
+    default_args=default_args,
+    description='A DAG with dynamically created tasks from DB config with parameters',
+    schedule_interval=timedelta(days=1),
+    start_date=datetime(2023, 8, 1),
+    catchup=False,
+    params={'param1': 'default_value1', 'param2': 'default_value2'}
+
+)
+
+
+def create_tasks(**kwargs):
+    params = kwargs['dag_run'].conf if kwargs['dag_run'] else {}
+    print("Params:", params)
+
+    task_ids = params['param1'].split(',')
+
+    # Fetch task configurations based on parameters
+    tasks_config = fetch_task_config(task_ids)
+
+    print(tasks_config)
+
+    previous_task = start
+
+    for task in tasks_config:
+        new_task = PythonOperator(
+            task_id=task['task_id'],
+            python_callable=print_message,
+            op_args=[task['message']],
+            dag=dag,
+        )
+        
+        previous_task >> new_task
+        previous_task = new_task
+
+    end = DummyOperator(
+        task_id='end',
+        dag=dag,
+    )
+
+    previous_task >> end
+
+
+# Initial dummy task
+start = DummyOperator(
+    task_id='start',
+    dag=dag,
+)
+
+# Create tasks dynamically using a PythonOperator
+create_tasks_op = PythonOperator(
+    task_id='create_tasks',
+    python_callable=create_tasks,
+    provide_context=True,
+    dag=dag,
+)
+
+
+start >> create_tasks_op
